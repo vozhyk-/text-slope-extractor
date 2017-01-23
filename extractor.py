@@ -26,7 +26,7 @@ def expectedSlope(desc, image):
 
 root = "../final-test-set"
 
-threshold = 0.005
+threshold = 0.01
 
 passed = 0
 failed = 0
@@ -46,9 +46,16 @@ with PyTessBaseAPI() as api:
             api.SetImage(image)
         except RuntimeError:
             continue
-
         
+        # boxes = api.GetComponentImages(RIL.TEXTLINE, True)
+        # print(boxes)
+        # for (im, box, _, _) in boxes:
+        #     api.SetRectangle(box['x'], box['y'], box['w'], box['h'])
+        #     text = api.GetUTF8Text()
+        #     if text == "":
+        #         print("Text is empty")
         _, _, _, obtained = api.AnalyseLayout().Orientation()
+
         print("expected:", expected,
               ", obtained:", obtained)
         if expected is None:
@@ -60,14 +67,6 @@ with PyTessBaseAPI() as api:
         else:
             failed += 1
             print("FAIL")
-        
-        # boxes = api.GetComponentImages(RIL.BLOCK, True)
-        # print(boxes)
-        # for (im, box, _, _) in boxes:
-        #     api.SetRectangle(box['x'], box['y'], box['w'], box['h'])
-        #     text = api.GetUTF8Text()
-        #     if text == "":
-        #         print("Text is empty")
 
 print("passed:", passed,
       ", failed:", failed,
