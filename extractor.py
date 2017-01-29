@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 from os import path
 import json
 
@@ -7,8 +8,9 @@ from PIL import Image
 from tesserocr import PyTessBaseAPI, RIL
 
 
-def pointToTL(pointInCart, height):
-    #return pointInCart
+# Translate a point
+# from Cartesian to the screen coordinate system
+def pointToScreen(pointInCart, height):
     return pointInCart[0], height - pointInCart[1]
 
 def expectedSlope(desc, image):
@@ -19,24 +21,28 @@ def expectedSlope(desc, image):
     except KeyError:
         return None
 
-    start = pointToTL(desc_start, height)
-    end = pointToTL(desc["end"], height)
+    start = pointToScreen(desc_start, height)
+    end = pointToScreen(desc["end"], height)
     return (end[1] - start[1]) / \
         (end[0] - start[0])
 
-root = "../final-test-set"
 
-threshold = 0.01
+# A JSON file specifying test images and the expected results
+test_params_file = sys.argv[2]
+# The directory with the images referred to in test_params_file
+image_root = sys.argv[1]
+
+threshold = 0.005
 
 passed = 0
 failed = 0
 
-with open(path.join(root, "first-sample-test-slopes.json"), "r") as f:
+with open(path.join(image_root, test_params_file), "r") as f:
     images = json.load(f)
 
 with PyTessBaseAPI() as api:
     for i in images:
-        imagePath = path.join(root, i["file"])
+        imagePath = path.join(image_root, i["file"])
         print(imagePath)
         image = Image.open(imagePath)
 
@@ -45,15 +51,9 @@ with PyTessBaseAPI() as api:
         try:
             api.SetImage(image)
         except RuntimeError:
+            print("Couldn't read", imagePath, ", skipping.")
             continue
         
-        # boxes = api.GetComponentImages(RIL.TEXTLINE, True)
-        # print(boxes)
-        # for (im, box, _, _) in boxes:
-        #     api.SetRectangle(box['x'], box['y'], box['w'], box['h'])
-        #     text = api.GetUTF8Text()
-        #     if text == "":
-        #         print("Text is empty")
         _, _, _, obtained = api.AnalyseLayout().Orientation()
 
         print("expected:", expected,
