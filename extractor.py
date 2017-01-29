@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-import sys
-from os import path
 import json
+import os
+import sys
 
 from PIL import Image
 from tesserocr import PyTessBaseAPI, RIL
@@ -28,21 +28,21 @@ def expectedSlope(desc, image):
 
 
 # A JSON file specifying test images and the expected results
-test_params_file = sys.argv[2]
-# The directory with the images referred to in test_params_file
-image_root = sys.argv[1]
+test_params_file = sys.argv[1]
 
-threshold = 0.005
+threshold = float(sys.argv[2])
 
 passed = 0
 failed = 0
 
-with open(path.join(image_root, test_params_file), "r") as f:
-    images = json.load(f)
+os.chdir(os.path.dirname(test_params_file))
+
+with open(test_params_file, "r") as f:
+    tests = json.load(f)
 
 with PyTessBaseAPI() as api:
-    for i in images:
-        imagePath = path.join(image_root, i["file"])
+    for i in tests:
+        imagePath = i["file"]
         print(imagePath)
         image = Image.open(imagePath)
 
@@ -51,7 +51,7 @@ with PyTessBaseAPI() as api:
         try:
             api.SetImage(image)
         except RuntimeError:
-            print("Couldn't read", imagePath, ", skipping.")
+            print("Couldn't read ``", imagePath, "'', skipping.")
             continue
         
         _, _, _, obtained = api.AnalyseLayout().Orientation()
