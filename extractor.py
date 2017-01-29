@@ -29,7 +29,9 @@ def expectedSlope(desc, image):
 
 # A JSON file specifying test images and the expected results
 test_params_file = sys.argv[1]
-
+# The success threshold -
+# if the difference between the expected and the obtained text slopes
+# is <= threshold, it's considered a success.
 threshold = float(sys.argv[2])
 
 passed = 0
