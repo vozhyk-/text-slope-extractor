@@ -2,7 +2,11 @@
 
 A script evaluating Tesseract's skew angle detection.
 
-A test set can be found at https://drive.google.com/drive/folders/0B_UhOpJxnOKQazBYVUV4TkZlZEU?usp=sharing .
+More about the project:
+https://docs.google.com/document/d/1xmZvKkgr7rr1VW67iA9MHj7B_y3idrrKSoaKQEtwUrw/edit?usp=sharing .
+
+A test set can be found at
+https://drive.google.com/drive/folders/0B_UhOpJxnOKQazBYVUV4TkZlZEU?usp=sharing .
 
 Run with:
 ```
@@ -11,8 +15,8 @@ Run with:
 ```
 Arguments:
  1. the test description file
- 2. the success threshold - if the difference between the expected 
-    and the obtained text slopes is `<= threshold`, 
+ 2. the success threshold - if the difference between the expected
+    and the obtained text slopes is `<= threshold`,
 	it's considered a success.
 
 
